@@ -9,7 +9,6 @@ Open `dist/index.html` in a browser. It is self-contained and does not need a lo
 ## Contents
 
 - `dist/index.html` - interactive one-page career constellation
-- `New-Eden-Career-Constellation-HTML5.zip` - packaged share copy
 - `source/` - extracted PDFs, source text, README, and checksums from the supplied archive
 
 Research cutoff from the source package: **19 August 2026 UTC**.
