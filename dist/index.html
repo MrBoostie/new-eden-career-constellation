@@ -204,6 +204,13 @@
       background-size: 42px 42px;
     }
 
+    .label-layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
     .scene-wrap {
       position: absolute;
       inset: 0;
@@ -299,20 +306,43 @@
       padding: 0;
     }
 
-    .node::after {
-      content: attr(data-title);
+    .map-label {
       position: absolute;
-      left: 50%;
-      top: calc(100% + 8px);
-      min-width: 98px;
-      max-width: 150px;
-      transform: translateX(-50%) rotateZ(22deg) rotateX(-62deg);
+      left: var(--label-x, 50%);
+      top: var(--label-y, 50%);
+      width: max-content;
+      max-width: 168px;
+      transform: translate(-50%, 14px);
       color: var(--text);
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1.12;
-      text-shadow: 0 2px 9px #000;
+      font-size: 12px;
+      font-weight: 850;
+      line-height: 1.15;
+      text-align: center;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+      padding: 5px 7px;
+      border: 1px solid color-mix(in srgb, var(--c), transparent 42%);
+      border-radius: 6px;
+      background: rgba(5, 8, 12, 0.82);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.34), 0 0 18px color-mix(in srgb, var(--c), transparent 74%);
+      opacity: 0.88;
       pointer-events: none;
+      transition: opacity 160ms ease, transform 160ms ease, border-color 160ms ease;
+      z-index: var(--label-z, 1);
+    }
+
+    .map-label.selected {
+      opacity: 1;
+      transform: translate(-50%, 18px) scale(1.08);
+      border-color: rgba(255, 255, 255, 0.82);
+      background: rgba(8, 12, 17, 0.96);
+      z-index: 20;
+    }
+
+    .map-label.preview {
+      opacity: 1;
+      transform: translate(-50%, 18px);
+      border-color: rgba(255, 255, 255, 0.7);
+      z-index: 19;
     }
 
     .node:hover, .node:focus-visible, .node.selected {
@@ -322,6 +352,7 @@
     }
 
     .node.hidden, .spoke.hidden { opacity: 0.08; pointer-events: none; }
+    .map-label.hidden { opacity: 0; }
 
     .hud {
       position: absolute;
@@ -453,7 +484,7 @@
       aside, .details { border-radius: 8px; }
       .filters { grid-template-columns: 1fr; }
       .switches, .stats, .facts { grid-template-columns: 1fr; }
-      .node::after { display: none; }
+      .map-label { display: none; }
       .scene { width: 94vw; height: 58vh; }
     }
   </style>
@@ -491,8 +522,9 @@
           <div class="hub">New<br>Eden</div>
         </div>
       </div>
+      <div id="labelLayer" class="label-layer" aria-hidden="true"></div>
       <div class="hud">
-        <span>Drag to rotate. Click a dot to expand its PDF-derived notes.</span>
+        <span>Drag to rotate. Click a dot for details; hover a dot for its label.</span>
         <span>Research cutoff: 19 Aug 2026 UTC</span>
       </div>
     </main>
@@ -560,6 +592,7 @@
 
     const scene = document.getElementById("scene");
     const sceneWrap = document.getElementById("sceneWrap");
+    const labelLayer = document.getElementById("labelLayer");
     const filters = document.getElementById("filters");
     const legend = document.getElementById("legend");
     const search = document.getElementById("search");
@@ -635,6 +668,10 @@
         button.style.setProperty("--c", color);
         button.title = `${node.title} - ${categories[node.cat].label}`;
         button.addEventListener("click", () => selectNode(node));
+        button.addEventListener("mouseenter", () => previewLabel(node.title, true));
+        button.addEventListener("mouseleave", () => previewLabel(node.title, false));
+        button.addEventListener("focus", () => previewLabel(node.title, true));
+        button.addEventListener("blur", () => previewLabel(node.title, false));
         button.addEventListener("keydown", event => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
@@ -642,6 +679,13 @@
           }
         });
         scene.appendChild(button);
+
+        const label = document.createElement("div");
+        label.className = "map-label";
+        label.dataset.title = node.title;
+        label.style.setProperty("--c", color);
+        label.textContent = node.title;
+        labelLayer.appendChild(label);
       });
     }
 
@@ -667,6 +711,9 @@
       source.href = node.source;
       source.textContent = node.source;
       scene.querySelectorAll(".node").forEach(btn => btn.classList.toggle("selected", btn.dataset.title === node.title));
+      labelLayer.querySelectorAll(".map-label").forEach(label => label.classList.toggle("selected", label.dataset.title === node.title));
+      refreshLabelVisibility();
+      updateLabels();
     }
 
     function applyFilters() {
@@ -679,11 +726,51 @@
         el.classList.toggle("hidden", !show);
         if (show && el.classList.contains("node")) visible++;
       });
+      refreshLabelVisibility(q);
       nodeCount.textContent = visible;
-      if (!nodes.includes(selected) || (activeCat !== "ALL" && selected.cat !== activeCat)) {
+      if (!nodes.includes(selected) || !nodeMatchesFilter(selected, q)) {
         const next = nodes.find(n => (activeCat === "ALL" || n.cat === activeCat) && (!q || `${n.title} ${n.summary} ${n.items.join(" ")}`.toLowerCase().includes(q)));
         if (next) selectNode(next);
       }
+      updateLabels();
+    }
+
+    function nodeMatchesFilter(node, q = search.value.trim().toLowerCase()) {
+      const haystack = `${node.title} ${node.cat} ${node.summary} ${node.items.join(" ")}`.toLowerCase();
+      return (activeCat === "ALL" || node.cat === activeCat) && (!q || haystack.includes(q));
+    }
+
+    function refreshLabelVisibility(q = search.value.trim().toLowerCase()) {
+      labelLayer.querySelectorAll(".map-label").forEach(label => {
+        const node = nodes.find(n => n.title === label.dataset.title);
+        const show = nodeMatchesFilter(node, q);
+        const shouldLabel = show && (node.title === selected.title || label.classList.contains("preview"));
+        label.classList.toggle("hidden", !shouldLabel);
+      });
+    }
+
+    function previewLabel(title, enabled) {
+      const label = labelLayer.querySelector(`.map-label[data-title="${CSS.escape(title)}"]`);
+      if (!label || title === selected.title) return;
+      label.classList.toggle("preview", enabled);
+      refreshLabelVisibility();
+      updateLabels();
+    }
+
+    function updateLabels() {
+      const mainRect = labelLayer.getBoundingClientRect();
+      scene.querySelectorAll(".node").forEach(el => {
+        const label = labelLayer.querySelector(`.map-label[data-title="${CSS.escape(el.dataset.title)}"]`);
+        if (!label) return;
+        const rect = el.getBoundingClientRect();
+        const rawX = rect.left + rect.width / 2 - mainRect.left;
+        const rawY = rect.top + rect.height / 2 - mainRect.top;
+        const x = Math.max(88, Math.min(mainRect.width - 88, rawX));
+        const y = Math.max(34, Math.min(mainRect.height - 66, rawY));
+        label.style.setProperty("--label-x", `${x}px`);
+        label.style.setProperty("--label-y", `${y}px`);
+        label.style.setProperty("--label-z", el.classList.contains("selected") ? "20" : "1");
+      });
     }
 
     search.addEventListener("input", applyFilters);
@@ -720,6 +807,7 @@
       scene.style.setProperty("--rx", `${rx}deg`);
       scene.style.setProperty("--rz", `${rz}deg`);
       last = { x: event.clientX, y: event.clientY };
+      updateLabels();
     });
 
     sceneWrap.addEventListener("pointerup", event => {
@@ -776,11 +864,17 @@
       frame();
     }
 
+    function labelLoop() {
+      updateLabels();
+      requestAnimationFrame(labelLoop);
+    }
+
     renderControls();
     renderGraph();
     selectNode(nodes[0]);
     applyFilters();
     starfield();
+    labelLoop();
   </script>
 </body>
 </html>
