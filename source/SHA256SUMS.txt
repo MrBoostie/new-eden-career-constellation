@@ -1,0 +1,4 @@
+694e1119328cd8f79e8fe43c7d41db22923e5c427e93e95bf254eb8fd6b70b32  New-Eden-Activities-Careers-2026-08-Field-Guide.pdf
+30c3d2475c68f340a49a90f0a9b8e48bf321b290ed25c9a04d352b611cc24229  New-Eden-Activities-Careers-2026-08-Notes-Sources.pdf
+4a38836f5f177408e56844848d92585de7761f4b923d04ed9be318878732b915  New-Eden-Activities-Careers-2026-08-Overview.pdf
+0c1102a2d2eeab0614b58f3dd63406da85c091c1299803bf6647b1b9dd20a965  README.txt

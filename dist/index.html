@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Eden Activities & Careers 2026.08 - 3D Map</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #07090d;
+      --panel: rgba(12, 16, 22, 0.84);
+      --panel-strong: rgba(17, 23, 31, 0.96);
+      --line: rgba(172, 192, 205, 0.22);
+      --text: #edf6f4;
+      --muted: #95a7ad;
+      --pve: #59d6a2;
+      --pvp: #ff6b6b;
+      --industry: #f5c84b;
+      --org: #6db7ff;
+      --community: #d98cff;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.48);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 22% 18%, rgba(89, 214, 162, 0.18), transparent 26%),
+        radial-gradient(circle at 78% 34%, rgba(255, 107, 107, 0.13), transparent 28%),
+        radial-gradient(circle at 55% 82%, rgba(245, 200, 75, 0.10), transparent 30%),
+        linear-gradient(145deg, #05070a, #0a0f15 55%, #08070b);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: 0;
+    }
+
+    canvas#stars {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.52;
+      pointer-events: none;
+    }
+
+    .app {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(270px, 330px) minmax(0, 1fr) minmax(300px, 380px);
+      grid-template-rows: 100vh;
+      gap: 14px;
+      padding: 14px;
+      z-index: 1;
+    }
+
+    aside, .details {
+      min-width: 0;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      border-radius: 8px;
+    }
+
+    aside {
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .kicker {
+      color: #93f0ce;
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+    }
+
+    h1 {
+      margin: 8px 0 8px;
+      font-size: clamp(24px, 3vw, 36px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .summary {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      display: grid;
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .search {
+      width: 100%;
+      min-height: 40px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: rgba(0, 0, 0, 0.28);
+      color: var(--text);
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    button {
+      min-width: 0;
+      min-height: 36px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    button:hover, button:focus-visible {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.11);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    button.active { background: color-mix(in srgb, var(--accent), transparent 74%); border-color: var(--accent); }
+    button[data-cat="PVE"] { --accent: var(--pve); }
+    button[data-cat="PVP"] { --accent: var(--pvp); }
+    button[data-cat="INDUSTRY"] { --accent: var(--industry); }
+    button[data-cat="ORGANIZATIONS"] { --accent: var(--org); }
+    button[data-cat="COMMUNITY"] { --accent: var(--community); }
+
+    .switches {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .legend {
+      display: grid;
+      gap: 7px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 22px;
+    }
+
+    .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--c);
+      box-shadow: 0 0 18px var(--c);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 16px;
+    }
+
+    .stat {
+      padding: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .stat b { display: block; font-size: 20px; }
+    .stat span { color: var(--muted); font-size: 11px; }
+
+    main {
+      position: relative;
+      min-width: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .scene-wrap {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      perspective: 1100px;
+      cursor: grab;
+    }
+
+    .scene-wrap.dragging { cursor: grabbing; }
+
+    .scene {
+      position: relative;
+      width: min(74vw, 920px);
+      height: min(76vh, 760px);
+      transform-style: preserve-3d;
+      transform: rotateX(var(--rx, 62deg)) rotateZ(var(--rz, -22deg));
+      transition: transform 260ms ease;
+    }
+
+    .scene.autorotate {
+      animation: turn 34s linear infinite;
+    }
+
+    .scene-wrap:hover .scene.autorotate,
+    .scene-wrap:focus-within .scene.autorotate {
+      animation-play-state: paused;
+    }
+
+    @keyframes turn {
+      from { transform: rotateX(62deg) rotateZ(-24deg); }
+      to { transform: rotateX(62deg) rotateZ(336deg); }
+    }
+
+    .ring {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: var(--size);
+      height: var(--size);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) translateZ(var(--z));
+      box-shadow: inset 0 0 36px rgba(255, 255, 255, 0.035);
+    }
+
+    .hub {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 118px;
+      height: 118px;
+      transform: translate(-50%, -50%) translateZ(76px);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: radial-gradient(circle, rgba(237, 246, 244, 0.95), rgba(89, 214, 162, 0.35) 44%, rgba(9, 18, 22, 0.55) 70%);
+      box-shadow: 0 0 55px rgba(89, 214, 162, 0.42);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: #081015;
+      text-transform: uppercase;
+    }
+
+    .spoke {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: var(--len);
+      height: 1px;
+      transform-origin: left center;
+      transform: translate3d(0, 0, var(--z)) rotate(var(--a));
+      background: linear-gradient(90deg, rgba(255,255,255,0.34), color-mix(in srgb, var(--c), transparent 24%), transparent);
+      opacity: 0.54;
+    }
+
+    .node {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: var(--s);
+      height: var(--s);
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.46);
+      background: radial-gradient(circle at 35% 30%, #fff, var(--c) 34%, color-mix(in srgb, var(--c), #000 62%));
+      box-shadow: 0 0 20px color-mix(in srgb, var(--c), transparent 16%), 0 0 50px color-mix(in srgb, var(--c), transparent 70%);
+      transform: translate3d(calc(var(--x) - 50%), calc(var(--y) - 50%), var(--z)) scale(var(--scale, 1));
+      cursor: pointer;
+      outline: none;
+      opacity: 0.96;
+      padding: 0;
+    }
+
+    .node::after {
+      content: attr(data-title);
+      position: absolute;
+      left: 50%;
+      top: calc(100% + 8px);
+      min-width: 98px;
+      max-width: 150px;
+      transform: translateX(-50%) rotateZ(22deg) rotateX(-62deg);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 800;
+      line-height: 1.12;
+      text-shadow: 0 2px 9px #000;
+      pointer-events: none;
+    }
+
+    .node:hover, .node:focus-visible, .node.selected {
+      --scale: 1.22;
+      border-color: white;
+      z-index: 20;
+    }
+
+    .node.hidden, .spoke.hidden { opacity: 0.08; pointer-events: none; }
+
+    .hud {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      color: rgba(237, 246, 244, 0.68);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    .details {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .detail-head {
+      padding: 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--detail, var(--pve)), transparent 82%), rgba(255,255,255,0.025));
+    }
+
+    .detail-cat {
+      color: var(--detail, var(--pve));
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    .detail-title {
+      margin: 8px 0 0;
+      font-size: 25px;
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    .detail-body {
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .detail-body p {
+      margin: 0 0 15px;
+      color: #cdd8dc;
+      line-height: 1.48;
+      font-size: 14px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 12px 0 18px;
+    }
+
+    .chip {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      padding: 6px 9px;
+      color: #dce8e9;
+      background: rgba(255, 255, 255, 0.055);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .facts {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .fact {
+      border-left: 3px solid var(--detail, var(--pve));
+      padding: 9px 10px;
+      background: rgba(255,255,255,0.045);
+      border-radius: 4px;
+    }
+
+    .fact b {
+      display: block;
+      font-size: 11px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .fact span {
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    a {
+      color: #88e7ff;
+      text-decoration: none;
+      overflow-wrap: anywhere;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .source-note {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 1100px) {
+      body { overflow: auto; }
+      .app {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto min(78vh, 760px) auto;
+        min-height: 100vh;
+      }
+      aside, .details { max-height: none; }
+      .scene { width: min(96vw, 760px); height: min(72vh, 680px); }
+      .hud { align-items: start; flex-direction: column; }
+    }
+
+    @media (max-width: 620px) {
+      .app { padding: 8px; gap: 8px; }
+      aside, .details { border-radius: 8px; }
+      .filters { grid-template-columns: 1fr; }
+      .switches, .stats, .facts { grid-template-columns: 1fr; }
+      .node::after { display: none; }
+      .scene { width: 94vw; height: 58vh; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="stars" aria-hidden="true"></canvas>
+  <div class="app">
+    <aside>
+      <div class="kicker">Edition 2026.08</div>
+      <h1>New Eden Career Constellation</h1>
+      <p class="summary">A one-page HTML5 consolidation of the supplied PDFs. The dots are activities; the height and distance hint at difficulty, risk, cost, and how deep into the sandbox each path tends to go.</p>
+      <div class="toolbar">
+        <input id="search" class="search" type="search" placeholder="Search activities, tags, summaries">
+        <div class="filters" id="filters"></div>
+        <div class="switches">
+          <button id="rotateBtn" class="active" title="Toggle slow scene rotation">Auto rotate</button>
+          <button id="resetBtn" title="Return to the default view">Reset view</button>
+        </div>
+      </div>
+      <div class="legend" id="legend"></div>
+      <div class="stats">
+        <div class="stat"><b id="nodeCount">25</b><span>activities</span></div>
+        <div class="stat"><b>5</b><span>domains</span></div>
+        <div class="stat"><b>3</b><span>PDFs used</span></div>
+      </div>
+    </aside>
+
+    <main aria-label="3D exploded career graph">
+      <div id="sceneWrap" class="scene-wrap">
+        <div id="scene" class="scene autorotate" style="--rx:62deg;--rz:-22deg;">
+          <div class="ring" style="--size:26%;--z:20px;"></div>
+          <div class="ring" style="--size:46%;--z:54px;"></div>
+          <div class="ring" style="--size:66%;--z:90px;"></div>
+          <div class="ring" style="--size:86%;--z:126px;"></div>
+          <div class="hub">New<br>Eden</div>
+        </div>
+      </div>
+      <div class="hud">
+        <span>Drag to rotate. Click a dot to expand its PDF-derived notes.</span>
+        <span>Research cutoff: 19 Aug 2026 UTC</span>
+      </div>
+    </main>
+
+    <section class="details" id="details" aria-live="polite">
+      <div class="detail-head">
+        <div class="detail-cat" id="detailCat">PVE</div>
+        <h2 class="detail-title" id="detailTitle">Rookie & Mission PvE</h2>
+      </div>
+      <div class="detail-body">
+        <p id="detailSummary"></p>
+        <div class="facts">
+          <div class="fact"><b>Start</b><span id="detailStart"></span></div>
+          <div class="fact"><b>Risk</b><span id="detailRisk"></span></div>
+          <div class="fact"><b>Cost</b><span id="detailCost"></span></div>
+          <div class="fact"><b>Omega</b><span id="detailOmega"></span></div>
+        </div>
+        <div class="chips" id="detailChips"></div>
+        <p><a id="detailSource" target="_blank" rel="noreferrer">Open current source</a></p>
+        <div class="source-note">Built from the supplied Overview, Field Guide, and Notes/Sources PDFs. Categories intentionally overlap because EVE is a sandbox, not a sensible career counselor.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const categories = {
+      PVE: { color: "#59d6a2", label: "PvE" },
+      PVP: { color: "#ff6b6b", label: "PvP" },
+      INDUSTRY: { color: "#f5c84b", label: "Industry" },
+      ORGANIZATIONS: { color: "#6db7ff", label: "Organizations" },
+      COMMUNITY: { color: "#d98cff", label: "Community" }
+    };
+
+    const nodes = [
+      { cat:"PVE", title:"Rookie & Mission PvE", items:["Career agents","Level 1-5 security missions","Epic arcs","Homefront Operations","Exordium starter activities"], summary:"Learn ships, navigation, fitting and combat in low-risk content. Exordium is PvP-free but pays less than normal highsec.", source:"https://www.eveonline.com/eve-academy/careers/enforcer", start:"Very easy", risk:"Low", cost:"Low", omega:"Mostly Alpha", depth:1 },
+      { cat:"PVE", title:"Exploration", items:["Probe scanning","Data & relic sites","Ghost & Sleeper caches","DED sites & escalations","Wormhole mapping"], summary:"Scan signatures and hack containers. Value and danger rise sharply outside highsec; always plan the exit first.", source:"https://www.eveonline.com/eve-academy/careers/explorer", start:"Easy", risk:"Medium", cost:"Low", omega:"Alpha-friendly", depth:2 },
+      { cat:"PVE", title:"Wormhole PvE", items:["Sleeper anomalies","Gas harvesting","Blue-loot farming","Rampant Drone Fabricator","Nomadic living"], summary:"No local intelligence, shifting routes and polarized holes make preparation part of the activity, not paperwork.", source:"https://wiki.eveuniversity.org/Wormholes", start:"Hard", risk:"High", cost:"Medium", omega:"Omega helps", depth:4 },
+      { cat:"PVE", title:"Abyss & Combat Sites", items:["Abyssal Deadspace T0-T6","Combat anomalies","Pirate strongholds / FOBs","Incursions","Limited-time event sites"], summary:"Abyssal Deadspace is timed filament PvE with weather, tiers and severe loss risk, not agent mission running.", source:"https://wiki.eveuniversity.org/Abyssal_Deadspace", start:"Medium", risk:"Medium to lethal", cost:"Low to high", omega:"Mixed", depth:3 },
+      { cat:"PVE", title:"Empire Campaigns", items:["Military Campaign objectives","Seasonal mining & hacking","Campaign hauling / industry","Faction standings & LP","Visions of Greatness epic arc"], summary:"Cradle of War campaigns combine PvE, PvP, mining, hacking, hauling and industry with lasting faction outcomes.", source:"https://www.eveonline.com/news/view/cradle-of-war-in-focus", start:"Medium", risk:"Variable", cost:"Variable", omega:"Mixed", depth:3 },
+
+      { cat:"PVP", title:"Solo & Small Gang", items:["Solo roaming","Small-gang skirmishing","Duels & proving fights","Low/null hunting","Wormhole hunting"], summary:"Mechanical skill matters, but target selection, bookmarks, intel and disengagement matter more.", source:"https://www.eveonline.com/eve-academy/careers/soldier-of-fortune", start:"Medium", risk:"High", cost:"Low to medium", omega:"Alpha can start", depth:3 },
+      { cat:"PVP", title:"Fleet Warfare", items:["Factional Warfare","Pirate insurgencies","Nullsec sovereignty war","Structure warfare","Capital & command fleets"], summary:"Join militia, corporation or public fleets. Roles range from tackle and logistics to command and capitals.", source:"https://wiki.eveuniversity.org/Faction_warfare", start:"Easy with group", risk:"High", cost:"Low to extreme", omega:"Mixed", depth:3 },
+      { cat:"PVP", title:"Ambush & Denial", items:["Gate camps","Bombing & interdiction","Combat probing","Black-ops drops","ESS reserve-bank robbery"], summary:"Control movement and information with bubbles, bombs, probes, camps, cynos and reserve-bank pressure.", source:"https://wiki.eveuniversity.org/Player_versus_Player", start:"Hard", risk:"High", cost:"Medium", omega:"Often helpful", depth:4 },
+      { cat:"PVP", title:"Highsec Conflict", items:["War declarations","Suicide ganking","Suspect baiting","Kill-right hunting","Anti-ganking / escort"], summary:"CONCORD punishes illegal aggression; it does not prevent it. Know safety settings, war eligibility and timers.", source:"https://wiki.eveuniversity.org/Suicide_ganking", start:"Medium", risk:"Political", cost:"Low to medium", omega:"Mixed", depth:2 },
+      { cat:"PVP", title:"Infrastructure Raiding", items:["Skyhook theft","Mercenary Den attacks","Metenox raids","POCO conflict","Supply-line interdiction"], summary:"Modern conflict includes Skyhooks, Mercenary Dens, Metenox drills and other production infrastructure.", source:"https://www.eveonline.com/news/view/equinox-expansion-notes", start:"Hard", risk:"High", cost:"Medium to high", omega:"Often Omega", depth:4 },
+
+      { cat:"INDUSTRY", title:"Resource Harvesting", items:["Ore & ice mining","Gas harvesting","Moon extraction","Planetary industry","Salvage"], summary:"Mine ore, ice, gas and moons; extract PI; salvage battlefields. Fleet boosts and compression shape scale.", source:"https://www.eveonline.com/eve-academy/careers/industrialist", start:"Easy", risk:"Low to high", cost:"Low to high", omega:"Mixed", depth:2 },
+      { cat:"INDUSTRY", title:"2026 Mining", items:["Built-in mining surveyor","Mining critical successes","Phased asteroid fields","Erratic ore reactions","Map-based ore scouting"], summary:"Catalyst added surveying overlays, faster cycles, critical successes, phased fields and variable erratic ores.", source:"https://www.eveonline.com/news/view/catalyst-expansion-notes", start:"Easy", risk:"Variable", cost:"Low to medium", omega:"Mixed", depth:2 },
+      { cat:"INDUSTRY", title:"Manufacturing", items:["T1 production","T2 invention & production","T3 reverse engineering","Capital construction","Structure production"], summary:"Turn blueprints and components into ships, modules and structures. Margin begins with cost accounting.", source:"https://wiki.eveuniversity.org/Manufacturing", start:"Medium", risk:"Market", cost:"Medium to extreme", omega:"Omega for depth", depth:4 },
+      { cat:"INDUSTRY", title:"Reactions & Processing", items:["Reprocessing","Composite reactions","Biochemical reactions","Hybrid / polymer reactions","Unrefined mineral reactions"], summary:"Refine raw resources and run structure-based reactions for advanced materials and production chains.", source:"https://wiki.eveuniversity.org/Reactions", start:"Hard", risk:"Market", cost:"Medium to high", omega:"Often Omega", depth:4 },
+      { cat:"INDUSTRY", title:"Trade & Logistics", items:["Station & regional trading","Hauling / courier contracts","Jump-freighter logistics","Industry supply chains","Market speculation"], summary:"Move goods or information across regional markets. Collateral, route security and fees decide profitability.", source:"https://wiki.eveuniversity.org/Trading", start:"Easy", risk:"Financial", cost:"Low to high", omega:"Mixed", depth:3 },
+
+      { cat:"ORGANIZATIONS", title:"Corporation Life", items:["Join or run a corporation","Recruiting & mentorship","Corporation Projects","Freelance Jobs","Buyback programs"], summary:"Projects and Freelance Jobs let corporations pay members or outsiders for measurable contributions.", source:"https://www.eveonline.com/news/view/legion-expansion-notes", start:"Easy", risk:"Social", cost:"Low", omega:"No", depth:1 },
+      { cat:"ORGANIZATIONS", title:"Alliance & Coalition", items:["Diplomacy","Fleet command","Logistics & doctrine","Territorial strategy","Alliance tournaments"], summary:"Coordinate groups, diplomacy, doctrines, strategic fleets, infrastructure and shared objectives.", source:"https://wiki.eveuniversity.org/Alliances", start:"Hard", risk:"Political", cost:"High", omega:"Usually", depth:4 },
+      { cat:"ORGANIZATIONS", title:"Sovereignty", items:["Sov Hub management","Orbital Skyhooks","Colony resource logistics","System upgrades","Ansiblex networks"], summary:"Equinox sovereignty is powered by stars and planetary colony resources, managed through Sov Hubs and Skyhooks.", source:"https://www.eveonline.com/news/view/equinox-expansion-notes", start:"Very hard", risk:"Strategic", cost:"Extreme", omega:"Yes", depth:5 },
+      { cat:"ORGANIZATIONS", title:"Structures", items:["Upwell ownership","Access-list management","Refineries & engineering","Fortification / defense","Public structures"], summary:"Own and operate citadels, engineering complexes and refineries; manage fuel, services, ACLs and vulnerability.", source:"https://wiki.eveuniversity.org/Upwell_structures", start:"Hard", risk:"High", cost:"High", omega:"Usually", depth:4 },
+      { cat:"ORGANIZATIONS", title:"Intelligence", items:["Scouting","Recon & watchlists","Wormhole chain mapping","Counter-intelligence","Espionage / theft"], summary:"Map chains, watch routes and report hostile movement. Good information prevents expensive surprises.", source:"https://wiki.eveuniversity.org/Scouting", start:"Medium", risk:"Variable", cost:"Low", omega:"Mixed", depth:3 },
+
+      { cat:"COMMUNITY", title:"Teaching & Support", items:["Rookie Help","Public help channels","Teach classes","Write / update guides","Mentoring in Exordium"], summary:"Help pilots learn through channels, classes and current guides. Exordium now offers a dedicated mentoring space.", source:"https://www.eveonline.com/eve-academy", start:"Easy", risk:"Low", cost:"Low", omega:"No", depth:1 },
+      { cat:"COMMUNITY", title:"Public Communities", items:["NPSI fleets","Incursion groups","Mining fleets","Hauling services","Public wormhole groups"], summary:"Fly without joining permanently: NPSI PvP, incursions, mining, hauling and specialist groups remain viable paths.", source:"https://wiki.eveuniversity.org/Public_fleets", start:"Easy", risk:"Variable", cost:"Low to medium", omega:"Mixed", depth:2 },
+      { cat:"COMMUNITY", title:"Creative Work", items:["Streaming & video","Podcasting","Journalism","Art & fiction","Third-party development"], summary:"Build tools, stories, broadcasts and art around New Eden while respecting CCP and third-party platform rules.", source:"https://forums.eveonline.com/c/community/10", start:"Easy", risk:"Low", cost:"Low to medium", omega:"No", depth:2 },
+      { cat:"COMMUNITY", title:"Science & History", items:["Project Discovery: cancer","Lore & history","Event archiving","Data analysis","Community research"], summary:"Project Discovery now trains analysis for cancer and immune-system research using flow-cytometry data.", source:"https://www.eveonline.com/discovery", start:"Easy", risk:"Low", cost:"Low", omega:"No", depth:1 },
+      { cat:"COMMUNITY", title:"Identity & Events", items:["Roleplaying","Player events","Achievements & titles","SKINR design","Tournament play"], summary:"Earn achievements and titles, create SKINR designs, roleplay, compete or organize player-run events.", source:"https://www.eveonline.com/news/view/the-cradle-of-war-expansion-is-here", start:"Easy", risk:"Variable", cost:"Low to high", omega:"Mixed", depth:2 }
+    ];
+
+    const scene = document.getElementById("scene");
+    const sceneWrap = document.getElementById("sceneWrap");
+    const filters = document.getElementById("filters");
+    const legend = document.getElementById("legend");
+    const search = document.getElementById("search");
+    const rotateBtn = document.getElementById("rotateBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const nodeCount = document.getElementById("nodeCount");
+    let activeCat = "ALL";
+    let selected = nodes[0];
+    let rx = 62;
+    let rz = -22;
+    let dragging = false;
+    let didMove = false;
+    let last = null;
+
+    function categoryColor(cat) { return categories[cat].color; }
+    function angleFor(i) { return (i / nodes.length) * Math.PI * 2 - Math.PI / 2; }
+    function radiusFor(node) { return 76 + node.depth * 42; }
+
+    function renderControls() {
+      const all = document.createElement("button");
+      all.textContent = "All";
+      all.className = "active";
+      all.dataset.cat = "ALL";
+      filters.appendChild(all);
+      Object.entries(categories).forEach(([key, meta]) => {
+        const btn = document.createElement("button");
+        btn.textContent = meta.label;
+        btn.dataset.cat = key;
+        filters.appendChild(btn);
+      });
+      filters.addEventListener("click", event => {
+        const btn = event.target.closest("button");
+        if (!btn) return;
+        activeCat = btn.dataset.cat;
+        filters.querySelectorAll("button").forEach(b => b.classList.toggle("active", b === btn));
+        applyFilters();
+      });
+
+      Object.entries(categories).forEach(([key, meta]) => {
+        const row = document.createElement("div");
+        row.className = "legend-row";
+        row.innerHTML = `<span class="swatch" style="--c:${meta.color}"></span><span>${meta.label}</span>`;
+        legend.appendChild(row);
+      });
+    }
+
+    function renderGraph() {
+      nodes.forEach((node, i) => {
+        const a = angleFor(i);
+        const r = radiusFor(node);
+        const x = Math.cos(a) * r;
+        const y = Math.sin(a) * r;
+        const z = 22 + node.depth * 33 + (i % 5) * 7;
+        const color = categoryColor(node.cat);
+
+        const spoke = document.createElement("div");
+        spoke.className = "spoke";
+        spoke.dataset.title = node.title;
+        spoke.style.setProperty("--len", `${r}px`);
+        spoke.style.setProperty("--a", `${a}rad`);
+        spoke.style.setProperty("--z", `${z}px`);
+        spoke.style.setProperty("--c", color);
+        scene.appendChild(spoke);
+
+        const button = document.createElement("button");
+        button.className = "node";
+        button.dataset.title = node.title;
+        button.dataset.cat = node.cat;
+        button.style.setProperty("--x", `${x}px`);
+        button.style.setProperty("--y", `${y}px`);
+        button.style.setProperty("--z", `${z}px`);
+        button.style.setProperty("--s", `${22 + node.depth * 4}px`);
+        button.style.setProperty("--c", color);
+        button.title = `${node.title} - ${categories[node.cat].label}`;
+        button.addEventListener("click", () => selectNode(node));
+        button.addEventListener("keydown", event => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectNode(node);
+          }
+        });
+        scene.appendChild(button);
+      });
+    }
+
+    function selectNode(node) {
+      selected = node;
+      document.documentElement.style.setProperty("--detail", categoryColor(node.cat));
+      document.getElementById("detailCat").textContent = categories[node.cat].label;
+      document.getElementById("detailTitle").textContent = node.title;
+      document.getElementById("detailSummary").textContent = node.summary;
+      document.getElementById("detailStart").textContent = node.start;
+      document.getElementById("detailRisk").textContent = node.risk;
+      document.getElementById("detailCost").textContent = node.cost;
+      document.getElementById("detailOmega").textContent = node.omega;
+      const chips = document.getElementById("detailChips");
+      chips.innerHTML = "";
+      node.items.forEach(item => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.textContent = item;
+        chips.appendChild(chip);
+      });
+      const source = document.getElementById("detailSource");
+      source.href = node.source;
+      source.textContent = node.source;
+      scene.querySelectorAll(".node").forEach(btn => btn.classList.toggle("selected", btn.dataset.title === node.title));
+    }
+
+    function applyFilters() {
+      const q = search.value.trim().toLowerCase();
+      let visible = 0;
+      scene.querySelectorAll(".node, .spoke").forEach(el => {
+        const node = nodes.find(n => n.title === el.dataset.title);
+        const haystack = `${node.title} ${node.cat} ${node.summary} ${node.items.join(" ")}`.toLowerCase();
+        const show = (activeCat === "ALL" || node.cat === activeCat) && (!q || haystack.includes(q));
+        el.classList.toggle("hidden", !show);
+        if (show && el.classList.contains("node")) visible++;
+      });
+      nodeCount.textContent = visible;
+      if (!nodes.includes(selected) || (activeCat !== "ALL" && selected.cat !== activeCat)) {
+        const next = nodes.find(n => (activeCat === "ALL" || n.cat === activeCat) && (!q || `${n.title} ${n.summary} ${n.items.join(" ")}`.toLowerCase().includes(q)));
+        if (next) selectNode(next);
+      }
+    }
+
+    search.addEventListener("input", applyFilters);
+
+    rotateBtn.addEventListener("click", () => {
+      scene.classList.toggle("autorotate");
+      rotateBtn.classList.toggle("active", scene.classList.contains("autorotate"));
+    });
+
+    resetBtn.addEventListener("click", () => {
+      rx = 62;
+      rz = -22;
+      scene.classList.remove("autorotate");
+      scene.style.setProperty("--rx", `${rx}deg`);
+      scene.style.setProperty("--rz", `${rz}deg`);
+      rotateBtn.classList.remove("active");
+    });
+
+    sceneWrap.addEventListener("pointerdown", event => {
+      dragging = true;
+      didMove = false;
+      last = { x: event.clientX, y: event.clientY };
+      sceneWrap.classList.add("dragging");
+      scene.classList.remove("autorotate");
+      rotateBtn.classList.remove("active");
+      sceneWrap.setPointerCapture(event.pointerId);
+    });
+
+    sceneWrap.addEventListener("pointermove", event => {
+      if (!dragging || !last) return;
+      if (Math.abs(event.clientX - last.x) + Math.abs(event.clientY - last.y) > 3) didMove = true;
+      rz += (event.clientX - last.x) * 0.35;
+      rx = Math.max(34, Math.min(76, rx - (event.clientY - last.y) * 0.2));
+      scene.style.setProperty("--rx", `${rx}deg`);
+      scene.style.setProperty("--rz", `${rz}deg`);
+      last = { x: event.clientX, y: event.clientY };
+    });
+
+    sceneWrap.addEventListener("pointerup", event => {
+      dragging = false;
+      sceneWrap.classList.remove("dragging");
+      try { sceneWrap.releasePointerCapture(event.pointerId); } catch {}
+    });
+
+    sceneWrap.addEventListener("click", event => {
+      if (didMove || event.target.closest(".node")) return;
+      let best = null;
+      scene.querySelectorAll(".node:not(.hidden)").forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const d = Math.hypot(event.clientX - cx, event.clientY - cy);
+        if (!best || d < best.d) best = { d, el };
+      });
+      if (best && best.d < 82) {
+        const node = nodes.find(item => item.title === best.el.dataset.title);
+        if (node) selectNode(node);
+      }
+    });
+
+    function starfield() {
+      const canvas = document.getElementById("stars");
+      const ctx = canvas.getContext("2d");
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      let stars = [];
+      function resize() {
+        canvas.width = innerWidth * dpr;
+        canvas.height = innerHeight * dpr;
+        canvas.style.width = innerWidth + "px";
+        canvas.style.height = innerHeight + "px";
+        stars = Array.from({ length: Math.min(260, Math.floor(innerWidth * innerHeight / 5200)) }, () => ({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          z: Math.random() * 1.8 + 0.2,
+          hue: Math.random() > 0.72 ? 46 : (Math.random() > 0.5 ? 165 : 198)
+        }));
+      }
+      function frame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (const s of stars) {
+          s.y += s.z * 0.12;
+          if (s.y > canvas.height) s.y = 0;
+          ctx.fillStyle = `hsla(${s.hue}, 85%, 74%, ${0.28 + s.z * 0.25})`;
+          ctx.fillRect(s.x, s.y, s.z * dpr, s.z * dpr);
+        }
+        requestAnimationFrame(frame);
+      }
+      addEventListener("resize", resize);
+      resize();
+      frame();
+    }
+
+    renderControls();
+    renderGraph();
+    selectNode(nodes[0]);
+    applyFilters();
+    starfield();
+  </script>
+</body>
+</html>

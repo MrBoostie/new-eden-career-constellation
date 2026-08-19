@@ -1,0 +1,130 @@
+NEW EDEN ACTIVITIES & CAREERS EDITION 2026.08 • VERIFIED 19 AUGUST 2026
+Field guide: activity summaries, starting points, risks and current primary references
+PVE
+ROOKIE & MISSION PVE
+Career agents • Level 1–5 security missions • Epic arcs • Homefront Operations • Exordium starter activities
+Learn ships, navigation, fitting and combat in low-risk content. Exordium is PvP-free but pays less than normal highsec.
+https://www.eveonline.com/eve-academy/careers/enforcer
+EXPLORATION
+Probe scanning • Data & relic sites • Ghost & Sleeper caches • DED sites & escalations • Wormhole mapping
+Scan signatures and hack containers. Value and danger rise sharply outside highsec; always plan the exit first.
+https://www.eveonline.com/eve-academy/careers/explorer
+WORMHOLE PVE
+Sleeper anomalies • Gas harvesting • Blue-loot farming • Rampant Drone Fabricator • Nomadic living
+No local intelligence, shifting routes and polarized holes make preparation part of the activity, not paperwork.
+https://wiki.eveuniversity.org/Wormholes
+ABYSS & COMBAT SITES
+Abyssal Deadspace (T0–T6) • Combat anomalies • Pirate strongholds / FOBs • Incursions • Limited-time event sites
+Abyssal Deadspace is timed filament PvE with weather, tiers and severe loss risk — not agent mission running.
+https://wiki.eveuniversity.org/Abyssal_Deadspace
+EMPIRE CAMPAIGNS
+Military Campaign objectives • Seasonal mining & hacking • Campaign hauling / industry • Faction standings & LP • Visions of Greatness epic arc
+Cradle of War campaigns combine PvE, PvP, mining, hacking, hauling and industry with lasting faction outcomes.
+https://www.eveonline.com/news/view/cradle-of-war-in-focus
+
+-- 1 of 5 --
+
+NEW EDEN ACTIVITIES & CAREERS EDITION 2026.08 • VERIFIED 19 AUGUST 2026
+Field guide, continued
+PVP
+SOLO & SMALL GANG
+Solo roaming • Small-gang skirmishing • Duels & proving fights • Low/null hunting • Wormhole hunting
+Mechanical skill matters, but target selection, bookmarks, intel and disengagement matter more.
+https://www.eveonline.com/eve-academy/careers/soldier-of-fortune
+FLEET WARFARE
+Factional Warfare • Pirate insurgencies • Nullsec sovereignty war • Structure warfare • Capital & command fleets
+Join militia, corporation or public fleets. Roles range from tackle and logistics to command and capitals.
+https://wiki.eveuniversity.org/Faction_warfare
+AMBUSH & DENIAL
+Gate camps • Bombing & interdiction • Combat probing • Black-ops drops • ESS reserve-bank robbery
+Control movement and information with bubbles, bombs, probes, camps, cynos and reserve-bank pressure.
+https://wiki.eveuniversity.org/Player_versus_Player
+HIGHSEC CONFLICT
+War declarations • Suicide ganking • Suspect baiting • Kill-right hunting • Anti-ganking / escort
+CONCORD punishes illegal aggression; it does not prevent it. Know safety settings, war eligibility and timers.
+https://wiki.eveuniversity.org/Suicide_ganking
+INFRASTRUCTURE RAIDING
+Skyhook theft • Mercenary Den attacks • Metenox raids • POCO conflict • Supply-line interdiction
+Modern conflict includes Skyhooks, Mercenary Dens, Metenox drills and other production infrastructure.
+https://www.eveonline.com/news/view/equinox-expansion-notes
+
+-- 2 of 5 --
+
+NEW EDEN ACTIVITIES & CAREERS EDITION 2026.08 • VERIFIED 19 AUGUST 2026
+Field guide, continued
+INDUSTRY
+RESOURCE HARVESTING
+Ore & ice mining • Gas harvesting • Moon extraction • Planetary industry • Salvage
+Mine ore, ice, gas and moons; extract PI; salvage battlefields. Fleet boosts and compression shape scale.
+https://www.eveonline.com/eve-academy/careers/industrialist
+2026 MINING
+Built-in mining surveyor • Mining critical successes • Phased asteroid fields • Erratic ore reactions • Map-based ore scouting
+Catalyst added surveying overlays, faster cycles, critical successes, phased fields and variable erratic ores.
+https://www.eveonline.com/news/view/catalyst-expansion-notes
+MANUFACTURING
+T1 production • T2 invention & production • T3 reverse engineering • Capital construction • Structure production
+Turn blueprints and components into ships, modules and structures. Margin begins with cost accounting.
+https://wiki.eveuniversity.org/Manufacturing
+REACTIONS & PROCESSING
+Reprocessing • Composite reactions • Biochemical reactions • Hybrid / polymer reactions • Unrefined mineral reactions
+Refine raw resources and run structure-based reactions for advanced materials and production chains.
+https://wiki.eveuniversity.org/Reactions
+TRADE & LOGISTICS
+Station & regional trading • Hauling / courier contracts • Jump-freighter logistics • Industry supply chains • Market speculation
+Move goods or information across regional markets. Collateral, route security and fees decide profitability.
+https://wiki.eveuniversity.org/Trading
+
+-- 3 of 5 --
+
+NEW EDEN ACTIVITIES & CAREERS EDITION 2026.08 • VERIFIED 19 AUGUST 2026
+Field guide, continued
+ORGANIZATIONS
+CORPORATION LIFE
+Join or run a corporation • Recruiting & mentorship • Corporation Projects • Freelance Jobs • Buyback programs
+Projects and Freelance Jobs let corporations pay members or outsiders for measurable contributions.
+https://www.eveonline.com/news/view/legion-expansion-notes
+ALLIANCE & COALITION
+Diplomacy • Fleet command • Logistics & doctrine • Territorial strategy • Alliance tournaments
+Coordinate groups, diplomacy, doctrines, strategic fleets, infrastructure and shared objectives.
+https://wiki.eveuniversity.org/Alliances
+SOVEREIGNTY
+Sov Hub management • Orbital Skyhooks • Colony resource logistics • System upgrades • Ansiblex networks
+Equinox sovereignty is powered by stars and planetary colony resources, managed through Sov Hubs and Skyhooks.
+https://www.eveonline.com/news/view/equinox-expansion-notes
+STRUCTURES
+Upwell ownership • Access-list management • Refineries & engineering • Fortification / defense • Public structures
+Own and operate citadels, engineering complexes and refineries; manage fuel, services, ACLs and vulnerability.
+https://wiki.eveuniversity.org/Upwell_structures
+INTELLIGENCE
+Scouting • Recon & watchlists • Wormhole chain mapping • Counter-intelligence • Espionage / theft
+Map chains, watch routes and report hostile movement. Good information prevents expensive surprises.
+https://wiki.eveuniversity.org/Scouting
+
+-- 4 of 5 --
+
+NEW EDEN ACTIVITIES & CAREERS EDITION 2026.08 • VERIFIED 19 AUGUST 2026
+Field guide, continued
+COMMUNITY
+TEACHING & SUPPORT
+Rookie Help • Public help channels • Teach classes • Write / update guides • Mentoring in Exordium
+Help pilots learn through channels, classes and current guides. Exordium now offers a dedicated mentoring space.
+https://www.eveonline.com/eve-academy
+PUBLIC COMMUNITIES
+NPSI fleets • Incursion groups • Mining fleets • Hauling services • Public wormhole groups
+Fly without joining permanently: NPSI PvP, incursions, mining, hauling and specialist groups remain viable paths.
+https://wiki.eveuniversity.org/Public_fleets
+CREATIVE WORK
+Streaming & video • Podcasting • Journalism • Art & fiction • Third-party development
+Build tools, stories, broadcasts and art around New Eden while respecting CCP and third-party platform rules.
+https://forums.eveonline.com/c/community/10
+SCIENCE & HISTORY
+Project Discovery: cancer • Lore & history • Event archiving • Data analysis • Community research
+Project Discovery now trains analysis for cancer and immune-system research using flow-cytometry data.
+https://www.eveonline.com/discovery
+IDENTITY & EVENTS
+Roleplaying • Player events • Achievements & titles • SKINR design • Tournament play
+Earn achievements and titles, create SKINR designs, roleplay, compete or organize player-run events.
+https://www.eveonline.com/news/view/the-cradle-of-war-expansion-is-here
+
+-- 5 of 5 --
+
